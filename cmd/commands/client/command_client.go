@@ -20,6 +20,7 @@ package client
 import (
 	log "github.com/cihub/seelog"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/mysterium/node/blockchain/registration"
 	"github.com/mysterium/node/client/connection"
 	node_cmd "github.com/mysterium/node/cmd"
 	"github.com/mysterium/node/communication"
@@ -105,7 +106,7 @@ func NewCommandWith(
 		originalLocationCache: originalLocationCache,
 	}
 
-	tequilapi_endpoints.AddRoutesForIdentities(router, identityManager, mysteriumClient, signerFactory)
+	tequilapi_endpoints.AddRoutesForIdentities(router, identityManager, mysteriumClient, signerFactory, registration.NewProofGenerator(keystoreInstance))
 	tequilapi_endpoints.AddRoutesForConnection(router, connectionManager, ipResolver, statsKeeper)
 	tequilapi_endpoints.AddRoutesForLocation(router, connectionManager, locationDetector, originalLocationCache)
 	tequilapi_endpoints.AddRoutesForProposals(router, mysteriumClient)
