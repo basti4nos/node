@@ -18,9 +18,12 @@
 package client
 
 import (
+	"fmt"
 	log "github.com/cihub/seelog"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/mysterium/node/blockchain/registration"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/mysterium/node/blockchain"
+	"github.com/mysterium/node/blockchain/registry"
 	"github.com/mysterium/node/client/connection"
 	node_cmd "github.com/mysterium/node/cmd"
 	"github.com/mysterium/node/communication"
@@ -43,17 +46,8 @@ import (
 // NewCommand function creates new client command by given options
 func NewCommand(options CommandOptions) *Command {
 	networkDefinition := getNetworkDefinition(options)
-	return NewCommandWith(
-		options,
-		server.NewClient(networkDefinition.DiscoveryAPIAddress),
-	)
-}
+	mysteriumClient := server.NewClient(networkDefinition.DiscoveryAPIAddress)
 
-// NewCommandWith does the same as NewCommand with possibility to override mysterium api client for external communication
-func NewCommandWith(
-	options CommandOptions,
-	mysteriumClient server.Client,
-) *Command {
 	nats_discovery.Bootstrap()
 	openvpn.Bootstrap()
 
@@ -106,11 +100,22 @@ func NewCommandWith(
 		originalLocationCache: originalLocationCache,
 	}
 
-	tequilapi_endpoints.AddRoutesForIdentities(router, identityManager, mysteriumClient, signerFactory, registration.NewProofGenerator(keystoreInstance))
+	tequilapi_endpoints.AddRoutesForIdentities(router, identityManager, mysteriumClient, signerFactory)
 	tequilapi_endpoints.AddRoutesForConnection(router, connectionManager, ipResolver, statsKeeper)
 	tequilapi_endpoints.AddRoutesForLocation(router, connectionManager, locationDetector, originalLocationCache)
 	tequilapi_endpoints.AddRoutesForProposals(router, mysteriumClient)
 	tequilapi_endpoints.AddRouteForStop(router, node_cmd.SoftKiller(command.Kill))
+
+	client, err := blockchain.NewClient("https://ropsten.infura.io/LWGVMbMdBj9ykHIjZmsw")
+	if err != nil {
+		fmt.Println("Error: ", err.Error())
+	}
+	statusProvider, err := registry.NewRegistrationStatusProvider(client, common.HexToAddress(networkDefinition.PaymentsContractAddress))
+	if err != nil {
+		fmt.Println("Error2: ", err.Error())
+	}
+
+	registry.AddRegistrationEndpoint(router, registry.NewRegistrationDataProvider(keystoreInstance), statusProvider)
 
 	return command
 }

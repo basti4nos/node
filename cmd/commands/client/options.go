@@ -44,6 +44,7 @@ type CommandOptions struct {
 
 	LocationDatabase string
 	Localnet         bool
+	EthereumEndpoint string
 }
 
 // ParseArguments parses CLI flags and adds to CommandOptions structure
@@ -138,6 +139,13 @@ func ParseArguments(args []string) (options CommandOptions, err error) {
 		"localnet",
 		false,
 		"Defines network configuration which expects localy deployed broker and discovery services",
+	)
+
+	flags.StringVar(
+		&options.EthereumEndpoint,
+		"ethereum.endpoint",
+		"",
+		"Url or IPC socket to connect to ethereum node, anything what accepts ethereum client - works",
 	)
 
 	err = flags.Parse(args[1:])
