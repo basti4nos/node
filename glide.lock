@@ -1,5 +1,5 @@
-hash: f983777e773d8fd7a561fd0999966b03e8ae9430a7d52450368dbd4bec186a77
-updated: 2018-07-17T11:42:45.719619+03:00
+hash: bb91c33e4a3bf1dadf73f28abb739dae3975c95d29ca1e0bfb4ce18de7427a6d
+updated: 2018-07-23T17:00:04.823646+03:00
 imports:
 - name: github.com/aristanetworks/goarista
   version: 32f94db2e6faa2c7250286dfb4c7ad3dc0f3ead2
@@ -33,12 +33,14 @@ imports:
   - crypto/randentropy
   - crypto/secp256k1
   - crypto/sha3
+  - ethclient
   - ethdb
   - event
   - log
   - metrics
   - params
   - rlp
+  - rpc
   - trie
 - name: github.com/go-stack/stack
   version: 259ab82a6cad3992b4e21ff5cac294ccb06474bc
@@ -49,8 +51,9 @@ imports:
 - name: github.com/mitchellh/go-homedir
   version: b8bc1bf767474819792c23f32d8286a45736f1c6
 - name: github.com/MysteriumNetwork/payments
-  version: 0d3ef8eab1ae24848cefa2a42f17ba1e34b99661
+  version: 668aca9395422a07544797fb96bb32a743e83d61
   subpackages:
+  - identity
   - registry
   - registry/generated
 - name: github.com/nats-io/go-nats
@@ -72,6 +75,8 @@ imports:
   - difflib
 - name: github.com/rjeczalik/notify
   version: 52ae50d8490436622a8941bd70c3dbe0acdd4bbf
+- name: github.com/rs/cors
+  version: 694cf2ad010fcf91ee35161f5bfdad8f42ed1b9a
 - name: github.com/satori/go.uuid
   version: f58768cc1a7a7e77a3bd49e98cdd21419399b6a3
 - name: github.com/stretchr/testify
@@ -100,6 +105,10 @@ imports:
   subpackages:
   - pbkdf2
   - scrypt
+- name: golang.org/x/net
+  version: a680a1efc54dd51c040b3b5ce4939ea3cf2ea0d1
+  subpackages:
+  - websocket
 - name: golang.org/x/sys
   version: ac767d655b305d4e9612f5f6e33120b9176c4ad4
   subpackages:
@@ -117,4 +126,6 @@ imports:
   version: 8dcd6a7f4951f6ff3ee9cbb919a06d8925822e57
   subpackages:
   - collections/prque
+- name: gopkg.in/natefinch/npipe.v2
+  version: c1b8fa8bdccecb0b8db834ee0b92fdbcfa606dd6
 testImports: []
