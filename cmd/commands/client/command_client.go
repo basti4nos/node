@@ -106,11 +106,11 @@ func NewCommand(options CommandOptions) *Command {
 	tequilapi_endpoints.AddRoutesForProposals(router, mysteriumClient)
 	tequilapi_endpoints.AddRouteForStop(router, node_cmd.SoftKiller(command.Kill))
 
-	client, err := blockchain.NewClient("https://ropsten.infura.io")
+	client, err := blockchain.NewClient(networkDefinition.EtherClientRPC)
 	if err != nil {
 		fmt.Println("Error: ", err.Error())
 	}
-	statusProvider, err := registry.NewRegistrationStatusProvider(client, common.HexToAddress(networkDefinition.PaymentsContractAddress))
+	statusProvider, err := registry.NewIdentityRegistry(client, networkDefinition.PaymentsContractAddress)
 	if err != nil {
 		fmt.Println("Error2: ", err.Error())
 	}
@@ -190,6 +190,8 @@ func getNetworkDefinition(options CommandOptions) metadata.NetworkDefinition {
 	network := metadata.DefaultNetwork
 
 	switch {
+	case options.Testnet:
+		network = metadata.TestnetDefinition
 	case options.Localnet:
 		network = metadata.LocalnetDefinition
 	}
@@ -197,6 +199,14 @@ func getNetworkDefinition(options CommandOptions) metadata.NetworkDefinition {
 	//override defined values one by one from options
 	if options.DiscoveryAPIAddress != metadata.DefaultNetwork.DiscoveryAPIAddress {
 		network.DiscoveryAPIAddress = options.DiscoveryAPIAddress
+	}
+
+	if common.HexToAddress(options.EtherPaymentsAddress) != metadata.DefaultNetwork.PaymentsContractAddress {
+		network.PaymentsContractAddress = common.HexToAddress(options.EtherPaymentsAddress)
+	}
+
+	if options.EtherClientRPC != metadata.DefaultNetwork.EtherClientRPC {
+		network.EtherClientRPC = options.EtherClientRPC
 	}
 
 	return network

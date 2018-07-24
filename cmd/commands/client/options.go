@@ -42,9 +42,11 @@ type CommandOptions struct {
 	DiscoveryAPIAddress string
 	IpifyUrl            string
 
-	LocationDatabase string
-	Localnet         bool
-	EthereumEndpoint string
+	LocationDatabase     string
+	Localnet             bool
+	Testnet              bool
+	EtherClientRPC       string
+	EtherPaymentsAddress string
 }
 
 // ParseArguments parses CLI flags and adds to CommandOptions structure
@@ -141,11 +143,25 @@ func ParseArguments(args []string) (options CommandOptions, err error) {
 		"Defines network configuration which expects localy deployed broker and discovery services",
 	)
 
+	flags.BoolVar(
+		&options.Testnet,
+		"testnet",
+		false,
+		"Defines test network configuration",
+	)
+
 	flags.StringVar(
-		&options.EthereumEndpoint,
-		"ethereum.endpoint",
+		&options.EtherClientRPC,
+		"ether.client.rpc",
+		metadata.DefaultNetwork.EtherClientRPC,
+		"Url or IPC socket to connect to ethereum node, anything what ethereum client accepts - works",
+	)
+
+	flags.StringVar(
+		&options.EtherPaymentsAddress,
 		"",
-		"Url or IPC socket to connect to ethereum node, anything what accepts ethereum client - works",
+		metadata.DefaultNetwork.PaymentsContractAddress.String(),
+		"Address of payments contract",
 	)
 
 	err = flags.Parse(args[1:])
